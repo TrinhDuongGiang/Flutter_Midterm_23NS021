@@ -1,0 +1,142 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="$FLUTTER_BASE_HREF">
+
+  <meta charset="UTF-8">
+  <meta
+    http-equiv="X-UA-Compatible"
+    content="IE=Edge"
+  >
+  <meta
+    name="description"
+    content="My App - User Management Dashboard"
+  >
+
+  <!-- Mobile and iOS settings -->
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+  <meta
+    name="mobile-web-app-capable"
+    content="yes"
+  >
+  <meta
+    name="apple-mobile-web-app-capable"
+    content="yes"
+  >
+  <meta
+    name="apple-mobile-web-app-status-bar-style"
+    content="black"
+  >
+  <meta
+    name="apple-mobile-web-app-title"
+    content="My App"
+  >
+
+  <!-- App icons -->
+  <link
+    rel="apple-touch-icon"
+    href="icons/Icon-192.png"
+  >
+  <link
+    rel="icon"
+    type="image/png"
+    href="favicon.png"
+  >
+
+  <!-- App title -->
+  <title>My App</title>
+
+  <!-- Web app manifest -->
+  <link rel="manifest" href="manifest.json">
+
+  <!-- Image paste support for Flutter Web -->
+  <script>
+    let imagePasteHandler = null;
+
+    window.registerImagePaste = function (callback) {
+      if (imagePasteHandler !== null) {
+        document.removeEventListener(
+          "paste",
+          imagePasteHandler
+        );
+      }
+
+      imagePasteHandler = function (event) {
+        const clipboardData = event.clipboardData;
+
+        if (!clipboardData) {
+          return;
+        }
+
+        const items = clipboardData.items;
+
+        if (!items) {
+          return;
+        }
+
+        for (const item of items) {
+          if (!item.type.startsWith("image/")) {
+            continue;
+          }
+
+          const file = item.getAsFile();
+
+          if (!file) {
+            continue;
+          }
+
+          event.preventDefault();
+
+          const reader = new FileReader();
+
+          reader.onload = function () {
+            if (
+              typeof reader.result === "string"
+            ) {
+              callback(reader.result);
+            }
+          };
+
+          reader.onerror = function () {
+            console.error(
+              "Failed to read pasted image."
+            );
+          };
+
+          reader.readAsDataURL(file);
+
+          break;
+        }
+      };
+
+      document.addEventListener(
+        "paste",
+        imagePasteHandler
+      );
+    };
+
+    window.unregisterImagePaste = function () {
+      if (imagePasteHandler !== null) {
+        document.removeEventListener(
+          "paste",
+          imagePasteHandler
+        );
+
+        imagePasteHandler = null;
+      }
+    };
+  </script>
+</head>
+
+<body>
+  <!-- Initialize Flutter Web -->
+  <script
+    src="flutter_bootstrap.js"
+    async
+  ></script>
+</body>
+</html>
